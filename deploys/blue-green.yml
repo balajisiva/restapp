@@ -1,8 +1,7 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: bluegreen
-  namespace: '${ trigger[''user''] }'
 spec:
   replicas: 1
   selector:

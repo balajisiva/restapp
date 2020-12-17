@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    spinnakerlabel: welcome-job
+  name: welcomejob
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+        - command:
+            - bash
+            - /tmp/initscript/run.sh
+          image: 'gradle:6.2.2-jdk8'
+          name: gitmavenstage
+          volumeMounts:
+            - mountPath: /tmp/initscript/
+              name: initscript
+      restartPolicy: Never
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: welcome-script
+          name: initscript

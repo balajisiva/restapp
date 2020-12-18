@@ -4,6 +4,7 @@ metadata:
   labels:
     spinnakerlabel: welcome-job
   name: welcomejob
+  namespace: sysdigdeploy
 spec:
   backoffLimit: 0
   template:

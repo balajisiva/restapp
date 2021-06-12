@@ -35,8 +35,6 @@ spec:
               value: '${parameters.repo}'
             - name: gitbranch
               value: '${parameters.branch}'
-            - name: cleanworkspace
-              value: '${parameters.clean}'
             - name: pomxmlpath
               value: '${parameters.pompath}'
             - name: gitusername

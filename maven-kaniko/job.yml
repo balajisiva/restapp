@@ -13,11 +13,10 @@ spec:
         - args:
             - --cache=true
             - --cache-dir=/cache
-            - --cache-repo=opsmx11/restapp-cache 
-            - >-
-              --destination=opsmx11/restapp:fromkanikopipe-${parameters.dockertag}
-              --dockerfile=/workspace/${parameters.Dockerfile}
-              --context=/workspace/${parameters.context}
+            - --cache-repo=opsmx11/restapp-cache  
+            - --destination=opsmx11/restapp:fromkanikopipe-${parameters.dockertag}
+            - --dockerfile=/workspace/${parameters.Dockerfile}
+            - --context=/workspace/${parameters.context}
           env:
             - name: gitrepo
               value: github.com/OpsMx/restapp.git

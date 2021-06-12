@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: javadocker-
+  labels:
+    app: maven
+  namespace: maven
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+        - args:
+            - '--dockerfile=/workspace/restapp/Dockerfile'
+            - '--context=/workspace/restapp'
+            - >-
+              --destination=opsmx11/restapp:fromkanikopipe-${parameters.dockertag}
+          env:
+            - name: gitrepo
+              value: github.com/OpsMx/restapp.git
+          image: 'gcr.io/kaniko-project/executor:latest'
+          imagePullPolicy: Always
+          name: kaniko
+          volumeMounts:
+            - mountPath: /workspace
+              name: gitrepo
+            - mountPath: /kaniko/.docker/
+              name: kaniko-secret
+      initContainers:
+        - command:
+            - bash
+            - /tmp/initscript/run.sh
+          env:
+            - name: gitrepo
+              value: '${parameters.repo}'
+            - name: gitbranch
+              value: '${parameters.branch}'
+            - name: cleanworkspace
+              value: '${parameters.clean}'
+            - name: pomxmlpath
+              value: '${parameters.pompath}'
+            - name: gitusername
+              valueFrom:
+                secretKeyRef:
+                  key: gitusername
+                  name: gitsecret
+            - name: gitpassword
+              valueFrom:
+                secretKeyRef:
+                  key: gitpassword
+                  name: gitsecret
+          image: '${parameters.image}'
+          name: gitmavenstage
+          volumeMounts:
+            - mountPath: /usr/src
+              name: gitrepo
+            - mountPath: /tmp/initscript/
+              name: initscript
+      restartPolicy: Never
+      volumes:
+        - name: gitrepo
+          persistentVolumeClaim:
+            claimName: gitrepo
+        - configMap:
+            defaultMode: 420
+            name: initscript
+          name: initscript
+        - name: kaniko-secret
+          secret:
+            items:
+              - key: config.json
+                path: config.json
+            secretName: kaniko-secret

@@ -17,9 +17,6 @@ spec:
             - --destination=opsmx11/restapp:fromkanikopipe-${parameters.dockertag}
             - --dockerfile=/workspace/${parameters.Dockerfile}
             - --context=/workspace/${parameters.context}
-          env:
-            - name: gitrepo
-              value: github.com/OpsMx/restapp.git
           image: 'gcr.io/kaniko-project/executor:latest'
           imagePullPolicy: Always
           name: kaniko

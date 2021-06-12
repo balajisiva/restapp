@@ -29,6 +29,8 @@ data:
     's/.git//')
 
     echo
+    
+    rm -rf $basedir
 
     echo cloning into "$basedir" with with "$gitbranch" from
     "https://"$gitrepo""

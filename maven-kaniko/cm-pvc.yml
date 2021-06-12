@@ -30,30 +30,6 @@ data:
 
     echo
 
-    if [ "$cleanworkspace" = true ] ; then
-
-    echo "deleting workspace $basedir"
-
-    rm -rf $basedir
-
-    fi
-
-    ####################
-
-    echo checking if $basedir exists
-
-    echo
-
-    if [ -d "$basedir" ]; then
-
-    echo updating "$basedir" with "$gitbranch" from "https://"$gitrepo""
-
-    cd $basedir
-
-    git checkout $gitbranch 
-
-    else
-
     echo cloning into "$basedir" with with "$gitbranch" from
     "https://"$gitrepo""
 
@@ -63,7 +39,7 @@ data:
 
     git checkout $gitbranch
 
-    fi
+
 
     #########################
 

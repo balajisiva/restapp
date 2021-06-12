@@ -1,0 +1,110 @@
+apiVersion: v1
+data:
+  run.sh: >
+    #!/bin/bash
+
+    cd /usr/src
+
+    git --version
+
+    mvn --version
+
+    java -version
+
+    mkdir -p localrepo
+
+
+    if [ "${parameters.cleanlocalrepo}" = true ] ; then
+
+    echo
+
+    echo "deleting maven files downloaded, the build will take longer for this
+    option"
+
+    rm -rf localrepo/*
+
+    fi
+
+    basedir=$(echo $gitrepo | sed 's/\// /g' | awk '{ print $NF}' | sed
+    's/.git//')
+
+    echo
+
+    if [ "$cleanworkspace" = true ] ; then
+
+    echo "deleting workspace $basedir"
+
+    rm -rf $basedir
+
+    fi
+
+    ####################
+
+    echo checking if $basedir exists
+
+    echo
+
+    if [ -d "$basedir" ]; then
+
+    echo updating "$basedir" with "$gitbranch" from "https://"$gitrepo""
+
+    cd $basedir
+
+    git checkout $gitbranch 
+
+    else
+
+    echo cloning into "$basedir" with with "$gitbranch" from
+    "https://"$gitrepo""
+
+    git clone  "https://"$gitusername":"$gitpassword"@"$gitrepo""
+
+    cd $basedir
+
+    git checkout $gitbranch
+
+    fi
+
+    #########################
+
+    echo the current git status is
+
+    git status
+
+    echo
+
+    echo current revision of workspace is 
+
+    git rev-parse HEAD
+
+    echo
+
+    echo changing directory to the pompath $(pwd)/${parameters.pompath}
+
+    cd ${parameters.pompath}
+
+    echo
+
+    echo running mvn command with the the arguments ${parameters.mavenargs} 
+
+    mvn -Dmaven.repo.local=/usr/src/localrepo ${parameters.mavenargs} 
+
+    #sleep 30d  # used for debugging
+kind: ConfigMap
+metadata:
+  name: initscript
+  namespace: maven
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitrepo
+  namespace: maven
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ibmc-vpc-block-10iops-tier
+  volumeMode: Filesystem

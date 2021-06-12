@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opsmx-restapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opsmx-restapp
+  template:
+    metadata:
+      labels:
+        app: opsmx-restapp
+    spec:
+      containers:
+        - image: 'opsmx11/restapp:fromkanikopipe-${parameters.dockertag}'
+          imagePullPolicy: Always
+          name: restapp
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 9090
+              name: prometheus
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opsmx-rest-service
+spec:
+  ports:
+    - name: canary
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: reports
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app: opsmx-restapp
+  type: LoadBalancer

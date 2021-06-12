@@ -11,8 +11,11 @@ spec:
     spec:
       containers:
         - args:
-            - '--dockerfile=/workspace/restapp/Dockerfile'
-            - '--context=/workspace/restapp'
+            - --cache=true
+            - --cache-dir=/cache
+            - --cache-repo=opsmx11/restapp-cache
+            - '--dockerfile=/workspace/${parameters.Dockerfile}'
+            - '--context=/workspace/${parameters.context}'
             - >-
               --destination=opsmx11/restapp:fromkanikopipe-${parameters.dockertag}
           env:
